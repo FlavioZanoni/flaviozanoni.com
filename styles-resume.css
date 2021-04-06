@@ -1,10 +1,14 @@
 * {
     margin: 0;
     padding: 0;
+    font-family: Roboto, Helvetica, sans-serif;
 }
 
 body{
     background: rgb(83, 83, 83);;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 nav {
@@ -45,15 +49,47 @@ nav {
     padding: .5rem .3rem .3rem 1rem;
 }
 
+main {
+    margin: auto;
+    width: 50%;
+    padding: 10px;
+    line-height: 28px;
+}
+
+main h1 {
+    display: block;
+    margin: 2rem 1rem 1rem 0rem;
+}
+
+main h2 {
+    display: block;
+    margin: 2rem 1rem 1rem 0rem;
+
+}
+
+main li {
+    display: block;
+    margin: 0.4rem;
+
+}
+
+main a {
+    text-decoration: none;
+    color: rgb(170, 169, 169);
+    transition: .2s;
+}
+main a:hover {
+    text-decoration: none;
+    color: rgb(126, 126, 126);
+}
+
 footer {
     display: flex;
+    margin-top: auto;
     align-items: center;
     justify-content: center;
-    position: fixed;
-    padding: 10px 10px 0px 10px;
-    bottom: 0;
-    width: 100%;
-    height: 4rem;
+    padding: .5rem;
+    height: 3rem;
     background: rgb(37, 37, 37);
 }
 
