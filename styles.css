@@ -49,6 +49,19 @@ nav {
     padding: .5rem .3rem .3rem 1rem;
 }
 
+#gamediv {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+canvas {
+    max-width: 100%;
+    display: block;
+}
+
+
 footer {
     display: flex;
     margin-top: auto;
