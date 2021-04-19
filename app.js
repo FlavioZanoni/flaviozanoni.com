@@ -1,6 +1,6 @@
 const app = new PIXI.Application({
-    width: 880,
-    height:495
+    width: 1440,
+    height: 810
 });
 
 // The application will create a canvas element for you that you
