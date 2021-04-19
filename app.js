@@ -1,6 +1,9 @@
+var w = window.innerWidth;
+var h = window.innerHeight;
+
 const app = new PIXI.Application({
-    width: 1440,
-    height: 810
+    width: w,
+    height: h
 });
 
 // The application will create a canvas element for you that you
