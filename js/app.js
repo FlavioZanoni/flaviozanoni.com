@@ -213,12 +213,14 @@ function nextTrack() {
         trackNum = 0;
         tracks[trackNum].play();
         console.log(trackNum);
+        rotation = 0.05;
 
     } else {
         tracks[trackNum].stop();
         trackNum++;
         tracks[trackNum].play();
         console.log(trackNum);
+        rotation = 0.05;
     }
 }
 
@@ -228,10 +230,12 @@ function backTrack() {
         tracks[trackNum].stop();
         trackNum = trackMax;
         tracks[trackNum].play();
+        rotation = 0.05;
     } else {
         tracks[trackNum].stop();
         trackNum--;
         tracks[trackNum].play();
+        rotation = 0.05;
     }
 }
 
