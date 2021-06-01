@@ -14,6 +14,7 @@ let outRoom = true;
 //sprites container
 let sprites = [];
 let playerSheet = [];
+let playerInsideSheet = [];
 let fade = [];
 // containers
 let startGame = new PIXI.Container();
@@ -42,7 +43,8 @@ const loader = PIXI.Loader.shared;
 loader.add('outside', "../images/sprites/full.png");
 loader.add('player', '../images/sprites/player.png');
 loader.add('presse', '../images/sprites/presse.png');
-loader.add('inside', "../images/sprites/inside.png");
+loader.add('floor', "../images/sprites/floor.png");
+loader.add('walls', "../images/sprites/walls.png");
 
 loader.add('tray', "../images/musicPlayer/tray.png");
 loader.add('next', "../images/musicPlayer/next.png");
@@ -61,7 +63,9 @@ function loaded() {
     app.stage.addChild(mPlayer);
     createPlayerSheet();
     createFade();
+    createPlayerInsideSheet()
     createPlayer();
+    createPlayerInside();
     createScenary();
     createMPlayer();
     app.ticker.add(gameLoop);
@@ -82,10 +86,13 @@ function createScenary() {
     sprites.presse.width *= 2;   
 }
 function createInside() {  
-    sprites.inside = PIXI.Sprite.from(loader.resources.inside.texture); 
-    sprites.inside.width = w;
-    sprites.inside.height = h;
-    inside.addChild(sprites.inside);
+    sprites.floor = PIXI.Sprite.from(loader.resources.floor.texture); 
+    sprites.floor.width = w;
+    sprites.floor.height = h;
+    sprites.walls = PIXI.Sprite.from(loader.resources.walls.texture); 
+    sprites.walls.width = w;
+    sprites.walls.height = h;
+    inside.addChild(sprites.floor);
     app.stage.addChild(inside);
 }
 function createMPlayer() {
@@ -152,16 +159,25 @@ function createMPlayer() {
 function createPlayer() {
     // player set
     sprites.player = new PIXI.AnimatedSprite(playerSheet.idleRight);
-    sprites.player.x = 850;
+    sprites.player.x = 350;
     sprites.player.y =  472;
     sprites.player.width = 100;
     sprites.player.height = 70;
     sprites.player.loop = false;
-    sprites.player.animationSpeed = 0.2;
+    sprites.player.animationSpeed = 0.15;
     app.stage.addChild(sprites.player);
     sprites.player.play();
 }
-
+function createPlayerInside() {
+    sprites.playerInside = new PIXI.AnimatedSprite(playerInsideSheet.idleSouth);
+    sprites.playerInside.x = 500;
+    sprites.playerInside.y =  400;
+    sprites.playerInside.width = 34;
+    sprites.playerInside.height = 76;
+    sprites.playerInside.loop = false;
+    sprites.playerInside.animationSpeed = 0.15;
+    sprites.playerInside.play();
+}
 function createFade() {
     let sheet = PIXI.BaseTexture.from('../images/sprites/fade.png');
     let w = 512;
@@ -186,13 +202,7 @@ function createFade() {
     ]
 
     sprites.fade = new PIXI.AnimatedSprite(fade.fadeIn);
-    sprites.fade.width = w;
-    sprites.fade.height = h;
-    sprites.fade.loop = false;
-    sprites.fade.animationSpeed = 0.02;
-
 }
-
 function createPlayerSheet() {
     let sheet = PIXI.BaseTexture.from('../images/sprites/player.png');
     let w = 52;
@@ -218,6 +228,15 @@ function createPlayerSheet() {
         new PIXI.Texture(sheet, new PIXI.Rectangle(7 * w, 0, w, h)),
         new PIXI.Texture(sheet, new PIXI.Rectangle(8 * w, 0, w, h)),
         new PIXI.Texture(sheet, new PIXI.Rectangle(9 * w, 0, w, h))
+    ]
+}
+function createPlayerInsideSheet() {
+    let sheet = PIXI.BaseTexture.from('../images/sprites/gba.png');
+    let w = 17
+    let h = 38
+
+    playerInsideSheet["idleSouth"] = [
+        new PIXI.Texture(sheet, new PIXI.Rectangle(0, 0, w, h))
     ]
 
 }
@@ -328,9 +347,6 @@ function redirect() {
 function changeStage() {
     console.log("changing Room");
     outRoom = false;
-    // change de move type
-    // key animation
-    // fade the room
     sprites.fade = new PIXI.AnimatedSprite(fade.fadeOut);
     sprites.fade.width = w;
     sprites.fade.height = h;
@@ -346,6 +362,8 @@ function changeStage() {
         sprites.fade.height = h;
         sprites.fade.loop = false;
         sprites.fade.animationSpeed = 0.151;
+        inside.addChild(sprites.playerInside);
+        inside.addChild(sprites.walls);
         inside.addChild(sprites.fade);
         sprites.fade.play();
     }
@@ -360,10 +378,10 @@ let grv = 2;
 let groundHeight = 472; 
 let bboxRight = w - 11;
 let bboxLeft = 0;
-let bboxRightRoom = 382;
-let bboxLeftRoom = 130;
-let bboxDownRoom  = 254;
-let bboxUpRoom = 61;
+let bboxRightRoom = 745;
+let bboxLeftRoom = 235;
+let bboxDownRoom  = 450;
+let bboxUpRoom = 70;
 let vsp = 0;
 let hsp = 0;
 let lastKey;
@@ -383,7 +401,6 @@ function gameLoop() {
         } else {
             scenary.removeChild(sprites.presse);
         }
-
         function onGround() {
             if(sprites.player.y <= groundHeight) {
                 return false;
@@ -391,7 +408,6 @@ function gameLoop() {
                 return true;
             }
         }
-
         // a (left -1)
         if (keys["a"] == true ||  keys["A"] == true) {
             if (!sprites.player.playing) {
@@ -434,38 +450,38 @@ function gameLoop() {
         if ((sprites.player.x + hsp) <= bboxLeft) {
             hsp = 0;
         }
-
         sprites.player.y += vsp;
         sprites.player.x += hsp;
     } else {
+
         if (keys["a"] == true) {
-            hsp = -3;
+            hsp = -7;
+        } else if (keys["d"] == true) {
+            hsp = 7;
+        } else {
+            hsp = 0;
         }
         if (keys["w"] == true) {
-            vsp = -3;
+            vsp = -7;
+        } else if (keys["s"] == true) {
+            vsp = 7;
+        } else {
+            vsp = 0;
         }
-        if (keys["s"] == true) {
-            vsp = 3;
-        }
-        if (keys["d"] == true) {
-            hsp = 3;
-        }
-
         // collision
-        if ((sprites.player.x + hsp) >= bboxRightRoom) {
+        if ((sprites.playerInside.x + hsp) >= bboxRightRoom) {
             hsp = 0;
         }
-        if ((sprites.player.x + hsp) <= bboxLeftRoom) {
+        if ((sprites.playerInside.x + hsp) <= bboxLeftRoom) {
             hsp = 0;
         }
-        if ((sprites.player.y + vsp) >= bboxUpRoom) {
+        if ((sprites.playerInside.y + vsp) <= bboxUpRoom) {
             vsp = 0;
         }
-        if ((sprites.player.y + vsp) <= bboxDownRoom) {
+        if ((sprites.playerInside.y + vsp) >= bboxDownRoom) {
             vsp = 0;
         }
-
-        sprites.player.y += vsp;
-        sprites.player.x += hsp;
+        sprites.playerInside.y += vsp;
+        sprites.playerInside.x += hsp;
     }
 }
