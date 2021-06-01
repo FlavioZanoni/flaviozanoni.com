@@ -184,23 +184,21 @@ function createFade() {
     let h = 288;
 
     fade["fadeIn"] = [
-        new PIXI.Texture(sheet, new PIXI.Rectangle(6 * w, 0, w, h)),
-        new PIXI.Texture(sheet, new PIXI.Rectangle(5 * w, 0, w, h)),
-        new PIXI.Texture(sheet, new PIXI.Rectangle(4 * w, 0, w, h)),
-        new PIXI.Texture(sheet, new PIXI.Rectangle(3 * w, 0, w, h)),
-        new PIXI.Texture(sheet, new PIXI.Rectangle(2 * w, 0, w, h)),
-        new PIXI.Texture(sheet, new PIXI.Rectangle(1 * w, 0, w, h)),
-        new PIXI.Texture(sheet, new PIXI.Rectangle(7 * w, 0, w, h))
+        new PIXI.Texture(sheet, new PIXI.Rectangle( 5 * w, 0, w, h)),
+        new PIXI.Texture(sheet, new PIXI.Rectangle( 4 * w, 0, w, h)),
+        new PIXI.Texture(sheet, new PIXI.Rectangle( 3 * w, 0, w, h)),
+        new PIXI.Texture(sheet, new PIXI.Rectangle( 2 * w, 0, w, h)),
+        new PIXI.Texture(sheet, new PIXI.Rectangle( 1 * w, 0, w, h)),
+        new PIXI.Texture(sheet, new PIXI.Rectangle( 0, 0, w, h))
     ]
     fade["fadeOut"] = [
-        new PIXI.Texture(sheet, new PIXI.Rectangle(1 * w, 0, w, h)),
-        new PIXI.Texture(sheet, new PIXI.Rectangle(2 * w, 0, w, h)),
-        new PIXI.Texture(sheet, new PIXI.Rectangle(3 * w, 0, w, h)),
-        new PIXI.Texture(sheet, new PIXI.Rectangle(4 * w, 0, w, h)),
-        new PIXI.Texture(sheet, new PIXI.Rectangle(5 * w, 0, w, h)),
-        new PIXI.Texture(sheet, new PIXI.Rectangle(6 * w, 0, w, h))
+        new PIXI.Texture(sheet, new PIXI.Rectangle( 0 , 0, w, h)),
+        new PIXI.Texture(sheet, new PIXI.Rectangle( 1 * w, 0, w, h)),
+        new PIXI.Texture(sheet, new PIXI.Rectangle( 2 * w, 0, w, h)),
+        new PIXI.Texture(sheet, new PIXI.Rectangle( 3 * w, 0, w, h)),
+        new PIXI.Texture(sheet, new PIXI.Rectangle( 4 * w, 0, w, h)),
+        new PIXI.Texture(sheet, new PIXI.Rectangle( 5 * w, 0, w, h))
     ]
-
     sprites.fade = new PIXI.AnimatedSprite(fade.fadeIn);
 }
 function createPlayerSheet() {
@@ -209,25 +207,25 @@ function createPlayerSheet() {
     let h = 37;
     
     playerSheet["idleRight"] = [
-        new PIXI.Texture(sheet, new PIXI.Rectangle(1 * w, 0, w, h))
+        new PIXI.Texture(sheet, new PIXI.Rectangle(w , 0, w, h))
     ]
 
     playerSheet["idleLeft"] = [
-        new PIXI.Texture(sheet, new PIXI.Rectangle(10 * w, 0, w, h))
+        new PIXI.Texture(sheet, new PIXI.Rectangle(9 * w, 0, w, h))
     ]
 
     playerSheet["walkRight"] = [
+        new PIXI.Texture(sheet, new PIXI.Rectangle(1 * w, 0, w, h)),
         new PIXI.Texture(sheet, new PIXI.Rectangle(2 * w, 0, w, h)),
         new PIXI.Texture(sheet, new PIXI.Rectangle(3 * w, 0, w, h)),
         new PIXI.Texture(sheet, new PIXI.Rectangle(4 * w, 0, w, h)),
-        new PIXI.Texture(sheet, new PIXI.Rectangle(5 * w, 0, w, h)),
     ]
 
     playerSheet["walkLeft"] = [
+        new PIXI.Texture(sheet, new PIXI.Rectangle(5 * w, 0, w, h)),
         new PIXI.Texture(sheet, new PIXI.Rectangle(6 * w, 0, w, h)),
         new PIXI.Texture(sheet, new PIXI.Rectangle(7 * w, 0, w, h)),
-        new PIXI.Texture(sheet, new PIXI.Rectangle(8 * w, 0, w, h)),
-        new PIXI.Texture(sheet, new PIXI.Rectangle(9 * w, 0, w, h))
+        new PIXI.Texture(sheet, new PIXI.Rectangle(8 * w, 0, w, h))
     ]
 }
 function createPlayerInsideSheet() {
@@ -354,7 +352,7 @@ function changeStage() {
     sprites.fade.animationSpeed = 0.151;
     scenary.addChild(sprites.fade);
     sprites.fade.play();
-    sprites.fade.onComplete = function changeScenary() {
+    sprites.fade.onComplete = () => {
         createInside();
         scenary.visible = false;
         sprites.fade = new PIXI.AnimatedSprite(fade.fadeIn);
@@ -366,6 +364,7 @@ function changeStage() {
         inside.addChild(sprites.walls);
         inside.addChild(sprites.fade);
         sprites.fade.play();
+        sprites.fade.onComplete = () => {sprites.fade.visible = false}
     }
 }
 
