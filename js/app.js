@@ -9,12 +9,15 @@ let w = 1024;
 let h = 576;
 let windoww = window.innerWidth;
 let windowh = (window.innerHeight - 15);
+let paused = false;
 let rotation = 0.05;
 let outRoom = true;
 //sprites container
 let sprites = [];
+let mplayerSheet = [];
 let playerSheet = [];
 let playerInsideSheet = [];
+let chestSheet = [];
 let fade = [];
 // containers
 let startGame = new PIXI.Container();
@@ -45,13 +48,9 @@ loader.add('player', '../images/sprites/player.png');
 loader.add('presse', '../images/sprites/presse.png');
 loader.add('floor', "../images/sprites/floor.png");
 loader.add('walls', "../images/sprites/walls.png");
-
+loader.add('chest', "../images/sprites/bau.png");
+loader.add('buttons', "../images/sprites/buttons.png");
 loader.add('tray', "../images/musicPlayer/tray.png");
-loader.add('next', "../images/musicPlayer/next.png");
-loader.add('prev', "../images/musicPlayer/prev.png");
-loader.add('nextClicked', "../images/musicPlayer/nextClicked.png");
-loader.add('prevClicked', "../images/musicPlayer/prevClicked.png");
-loader.add('play', "../images/musicPlayer/play.png");
 loader.add('disk', "../images/musicPlayer/disk.png");
 
 loader.load(loaded);
@@ -60,12 +59,17 @@ function loaded() {
     console.log('[app] => Loaded');
     scenary.filters = [time];
     app.stage.addChild(scenary);
+    app.stage.addChild(inside);
     app.stage.addChild(mPlayer);
-    createPlayerSheet();
+    createMplayerSheet()
     createFade();
     createPlayerInsideSheet()
-    createPlayer();
     createPlayerInside();
+    createPlayerSheet();
+    createChestSheet();
+    createChest();
+    createChestTwo();
+    createPlayer();
     createScenary();
     createMPlayer();
     app.ticker.add(gameLoop);
@@ -93,78 +97,87 @@ function createInside() {
     sprites.walls.width = w;
     sprites.walls.height = h;
     inside.addChild(sprites.floor);
-    app.stage.addChild(inside);
 }
 function createMPlayer() {
-    sprites.tray = PIXI.Sprite.from(loader.resources.tray.texture);
-    sprites.next = PIXI.Sprite.from(loader.resources.next.texture);
-    sprites.prev = PIXI.Sprite.from(loader.resources.prev.texture);
-    sprites.play = PIXI.Sprite.from(loader.resources.play.texture);
-    sprites.disk = PIXI.Sprite.from(loader.resources.disk.texture);
-
     mPlayer.x = 840;
     mPlayer.y = 40;
+
+    sprites.tray = PIXI.Sprite.from(loader.resources.tray.texture);
+    sprites.disk = PIXI.Sprite.from(loader.resources.disk.texture);
+    sprites.next = new PIXI.AnimatedSprite(mplayerSheet.next);
+    sprites.prev = new PIXI.AnimatedSprite(mplayerSheet.prev);
+    sprites.play = new PIXI.AnimatedSprite(mplayerSheet.play);
 
     mPlayer.addChild(sprites.tray);
     sprites.tray.width = 100;
     sprites.tray.height = 40;
-    
+    sprites.tray.x = 0;
+    sprites.tray.y = 0;
     //next
     mPlayer.addChild(sprites.next);
     sprites.next.width = 18;
     sprites.next.height = 20;
+    sprites.next.x = 60;
+    sprites.next.y = 10;
     sprites.next.interactive = true;
     sprites.next.buttonMode = true;
-    sprites.next.on('pointerdown', nextTrack);
+    sprites.next.on('pointerdown', () => {
+        sprites.next.textures = mplayerSheet.nextClicked;
+        nextTrack();
+    });
+    sprites.next.on('pointerup', () => { sprites.next.textures = mplayerSheet.next; });
     
     //prev
     mPlayer.addChild(sprites.prev);
     sprites.prev.width = 18;
     sprites.prev.height = 20;
+    sprites.prev.x = 10;
+    sprites.prev.y = 10;
     sprites.prev.interactive = true;
     sprites.prev.buttonMode = true;
-    sprites.prev.on('pointerdown', backTrack)
+    sprites.prev.on('pointerdown', () => {
+        sprites.prev.textures = mplayerSheet.prevClicked;
+        backTrack();
+    })
+    sprites.prev.on('pointerup', () => { sprites.prev.textures = mplayerSheet.prev; });
     
     //play / pause
     mPlayer.addChild(sprites.play);
     sprites.play.width = 28;
     sprites.play.height = 28;
+    sprites.play.x = 30;
+    sprites.play.y = 6;
     sprites.play.interactive = true;
     sprites.play.buttonMode = true;
-    sprites.play.on('pointerdown', demute);
+    sprites.play.on('pointerdown', () => {
+        sprites.play.textures = mplayerSheet.pausedClicked;
+        demute();
+    });
+    sprites.play.on('pointerup', () => { 
+        if (!paused) {
+            sprites.play.textures = mplayerSheet.paused; 
+        } else {
+            sprites.play.textures = mplayerSheet.play;
+        }
+    });
     
     mPlayer.addChild(sprites.disk);
     sprites.disk.width = 48;
     sprites.disk.height = 48;
+    sprites.disk.x = 106;
+    sprites.disk.y = 20;
     sprites.disk.anchor.set(0.5);
     sprites.disk.interactive = true;
     sprites.disk.buttonMode = true;
     sprites.disk.on('pointerdown', redirect);
-
-    sprites.tray.x = 0;
-    sprites.tray.y = 0;
-    
-    sprites.prev.x = 10;
-    sprites.prev.y = 10;
-
-    sprites.play.x = 30;
-    sprites.play.y = 6;
-
-    sprites.next.x = 60;
-    sprites.next.y = 10;
-
-    sprites.disk.x = 106;
-    sprites.disk.y = 20;
 }
 function createPlayer() {
     // player set
-    sprites.player = new PIXI.AnimatedSprite(playerSheet.idleRight);
-    sprites.player.x = 350;
+    sprites.player.textures = playerSheet.idleRight;
+    sprites.player.x = 200;
     sprites.player.y =  472;
     sprites.player.width = 100;
     sprites.player.height = 70;
-    sprites.player.loop = false;
-    sprites.player.animationSpeed = 0.15;
     app.stage.addChild(sprites.player);
     sprites.player.play();
 }
@@ -177,6 +190,22 @@ function createPlayerInside() {
     sprites.playerInside.loop = false;
     sprites.playerInside.animationSpeed = 0.15;
     sprites.playerInside.play();
+}
+function createChest() {
+    sprites.chest.textures = chestSheet.closed;
+    sprites.chest.x = 400;
+    sprites.chest.y = 150;
+    sprites.chest.width = 84;
+    sprites.chest.height = 58;
+    sprites.chest.play();
+}
+function createChestTwo() {
+    sprites.chestTwo.textures = chestSheet.closed;
+    sprites.chestTwo.x = 550;
+    sprites.chestTwo.y = 150;
+    sprites.chestTwo.width = 84;
+    sprites.chestTwo.height = 58;
+    sprites.chestTwo.play();
 }
 function createFade() {
     let sheet = PIXI.BaseTexture.from('../images/sprites/fade.png');
@@ -200,6 +229,8 @@ function createFade() {
         new PIXI.Texture(sheet, new PIXI.Rectangle( 5 * w, 0, w, h))
     ]
     sprites.fade = new PIXI.AnimatedSprite(fade.fadeIn);
+    sprites.fade.loop = false;
+    sprites.fade.animationSpeed = 0.151;
 }
 function createPlayerSheet() {
     let sheet = PIXI.BaseTexture.from('../images/sprites/player.png');
@@ -227,6 +258,9 @@ function createPlayerSheet() {
         new PIXI.Texture(sheet, new PIXI.Rectangle(7 * w, 0, w, h)),
         new PIXI.Texture(sheet, new PIXI.Rectangle(8 * w, 0, w, h))
     ]
+    sprites.player = new PIXI.AnimatedSprite(playerSheet.idleRight);
+    sprites.player.loop = false;
+    sprites.player.animationSpeed = 0.15;
 }
 function createPlayerInsideSheet() {
     let sheet = PIXI.BaseTexture.from('../images/sprites/gba.png');
@@ -238,12 +272,80 @@ function createPlayerInsideSheet() {
     ]
 
 }
+function createMplayerSheet() {
+    let sheet = PIXI.BaseTexture.from('../images/sprites/buttons.png');
+    let w = 14;
+    let h = 14;
+
+    mplayerSheet["next"] = [
+        new PIXI.Texture(sheet, new PIXI.Rectangle( w, 0, w - 4, h - 4))
+    ]
+
+    mplayerSheet["nextClicked"] = [
+        new PIXI.Texture(sheet, new PIXI.Rectangle(0, 0, w - 4, h - 4))
+    ]
+
+    mplayerSheet["prev"] = [
+        new PIXI.Texture(sheet, new PIXI.Rectangle(3 * w, 0, w - 4, h - 4))
+    ]
+
+    mplayerSheet["prevClicked"] = [
+        new PIXI.Texture(sheet, new PIXI.Rectangle(2 * w, 0, w - 4, h - 4))
+    ]
+
+    mplayerSheet["play"] = [
+        new PIXI.Texture(sheet, new PIXI.Rectangle(5 * w, 0, w, h))
+    ]
+
+    mplayerSheet["playClicked"] = [
+        new PIXI.Texture(sheet, new PIXI.Rectangle(4 * w, 0, w, h))
+    ]
+
+    mplayerSheet["paused"] = [
+        new PIXI.Texture(sheet, new PIXI.Rectangle(7 * w, 0, w, h))
+    ]
+
+    mplayerSheet["pausedClicked"] = [
+        new PIXI.Texture(sheet, new PIXI.Rectangle(6 * w, 0, w, h))
+    ]
+}
+function createChestSheet() {
+    let sheet = PIXI.BaseTexture.from('../images/sprites/bau.png');
+    let w = 42;
+    let h = 29;
+
+    chestSheet["closed"] = [
+        new PIXI.Texture(sheet, new PIXI.Rectangle( 0, 0, w, h))
+    ] 
+
+    chestSheet["open"] = [
+        new PIXI.Texture(sheet, new PIXI.Rectangle( 3 * w, 0, w, h ))
+    ] 
+
+    chestSheet["opening"] = [
+        new PIXI.Texture(sheet, new PIXI.Rectangle( 1 * w, 0, w, h )),
+        new PIXI.Texture(sheet, new PIXI.Rectangle( 2 * w, 0, w, h)),
+        new PIXI.Texture(sheet, new PIXI.Rectangle( 3 * w, 0, w, h))
+    ] 
+
+    sprites.chest = new PIXI.AnimatedSprite(chestSheet.closed);
+    sprites.chest.loop = false;
+    sprites.chest.animationSpeed = 0.2;
+
+    sprites.chestTwo = new PIXI.AnimatedSprite(chestSheet.closed);
+    sprites.chestTwo.loop = false;
+    sprites.chestTwo.animationSpeed = 0.2;
+}
 
 let wind = new Howl ({
     src:['../sounds/windo.mp3'],
     autoplay: true,
     volume: 0,
     loop:true   
+})
+let chesto = new Howl ({
+    src:['../sounds/bau.mp3'],
+    volume: 0.9
 })
 
 let tracks = [  
@@ -284,8 +386,7 @@ let tracks = [
 
 let trackNum = 0;
 let trackMax = tracks.length - 1;   
-let paused = false;
-tracks[trackNum].play();
+//tracks[trackNum].play();
 
 // mPlayer commands
 function nextTrack() {
@@ -305,7 +406,6 @@ function nextTrack() {
         rotation = 0.05;
     }
 }
-
 function backTrack() {
     console.log('[music] => Back track');
     if (trackNum == 0) {
@@ -320,7 +420,6 @@ function backTrack() {
         rotation = 0.05;
     }
 }
-
 function demute() {
     let saveseek;
     if (tracks[trackNum].playing()){
@@ -330,42 +429,45 @@ function demute() {
         saveseek = tracks[trackNum].seek();
         console.log('[music] => Paused');
     } else if (paused == true) {
+        paused == false;
         tracks[trackNum].play();
         tracks[trackNum].seek(saveseek);
         rotation = 0.05;
         console.log('[music] => Unpaused');
+        sprites.play.textures = mplayerSheet.playClicked;
     }
 }
-
 function redirect() {
     console.log('redirect');
     window.open("https://soundcloud.com/user-102055220");
 }
-
 function changeStage() {
     console.log("changing Room");
     outRoom = false;
-    sprites.fade = new PIXI.AnimatedSprite(fade.fadeOut);
-    sprites.fade.width = w;
-    sprites.fade.height = h;
-    sprites.fade.loop = false;
-    sprites.fade.animationSpeed = 0.151;
-    scenary.addChild(sprites.fade);
-    sprites.fade.play();
-    sprites.fade.onComplete = () => {
-        createInside();
-        scenary.visible = false;
-        sprites.fade = new PIXI.AnimatedSprite(fade.fadeIn);
+    // run keyhole animation
+    //sprites.keyhole.onComplete = () => {
+        //remove the player for now
+        app.stage.removeChild(sprites.player);
+        
+        sprites.fade.textures = fade.fadeOut;
         sprites.fade.width = w;
         sprites.fade.height = h;
-        sprites.fade.loop = false;
-        sprites.fade.animationSpeed = 0.151;
-        inside.addChild(sprites.playerInside);
-        inside.addChild(sprites.walls);
-        inside.addChild(sprites.fade);
+        scenary.addChild(sprites.fade);
         sprites.fade.play();
-        sprites.fade.onComplete = () => {sprites.fade.visible = false}
-    }
+        sprites.fade.onComplete = () => { 
+            createInside();
+            scenary.visible = false;
+            sprites.fade.textures = fade.fadeIn;
+            sprites.fade.width = w;
+            sprites.fade.height = h;
+            inside.addChild(sprites.chest);
+            inside.addChild(sprites.chestTwo)
+            inside.addChild(sprites.playerInside);
+            inside.addChild(sprites.walls);
+            inside.addChild(sprites.fade);
+            sprites.fade.play();
+            sprites.fade.onComplete = () => {sprites.fade.visible = false}
+        }
 }
 
 // lsiteners and movement
@@ -414,7 +516,7 @@ function gameLoop() {
                 sprites.player.play();
             } 
             hsp = -6;
-            lastKey = "left"
+            lastKey = "left";
         } else if (keys["d"] == true ||  keys["D"] == true) {
             if (!sprites.player.playing) {
                 sprites.player.textures = playerSheet.walkRight;
@@ -452,18 +554,17 @@ function gameLoop() {
         sprites.player.y += vsp;
         sprites.player.x += hsp;
     } else {
-
         if (keys["a"] == true) {
-            hsp = -7;
+            hsp = -6;
         } else if (keys["d"] == true) {
-            hsp = 7;
+            hsp = 6;
         } else {
             hsp = 0;
         }
         if (keys["w"] == true) {
-            vsp = -7;
+            vsp = -6;
         } else if (keys["s"] == true) {
-            vsp = 7;
+            vsp = 6;
         } else {
             vsp = 0;
         }
@@ -479,6 +580,46 @@ function gameLoop() {
         }
         if ((sprites.playerInside.y + vsp) >= bboxDownRoom) {
             vsp = 0;
+        }
+        //colision y, chest1
+        if ((sprites.playerInside.x >= 370) && (sprites.playerInside.x <= 480)) {
+            if(keys["e"] == true) {
+                sprites.chest.textures = chestSheet.opening;
+                sprites.chest.play();
+                chesto.play();
+                sprites.chest.onComplete = () => {
+                    //open
+                }
+            }
+            if ((sprites.playerInside.y + vsp) <= 150 && (sprites.playerInside.y + vsp) >= 88) {
+                vsp = 0;
+            }
+        }
+        //colision y, chest2
+        if ((sprites.playerInside.x >= 520) && (sprites.playerInside.x <= 630)) {
+            if(keys["e"] == true) {
+                sprites.chestTwo.textures = chestSheet.opening;
+                sprites.chestTwo.play();
+                chesto.play();
+                sprites.chestTwo.onComplete = () => {
+                    //open
+                }
+            }
+            if ((sprites.playerInside.y + vsp) <= 150 && (sprites.playerInside.y + vsp) >= 88) {
+                vsp = 0;
+            }
+        }
+        //colision x, chest1
+        if ((sprites.playerInside.y <= 150) && (sprites.playerInside.y >= 88)) {
+            if ((sprites.playerInside.x + hsp) >= 370 && (sprites.playerInside.x + hsp) <= 480) {
+                hsp = 0;
+            }
+        }
+        //colision x, chest2
+        if ((sprites.playerInside.y <= 150) && (sprites.playerInside.y >= 88)) {
+            if ((sprites.playerInside.x + hsp) >= 520 && (sprites.playerInside.x + hsp) <= 630) {
+                hsp = 0;
+            }
         }
         sprites.playerInside.y += vsp;
         sprites.playerInside.x += hsp;
