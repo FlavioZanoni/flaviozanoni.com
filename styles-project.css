@@ -5,7 +5,7 @@
 }
 
 body{
-    background: rgb(83, 83, 83);;
+    background: rgb(189, 189, 189);
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -49,6 +49,83 @@ nav {
     padding: .5rem .3rem .3rem 1rem;
 }
 
+h1 {
+    font-size: 3rem;
+    padding: 5rem;
+    font-weight: 800;
+}
+
+h2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    background-color: rgb(41, 41, 41);
+    color: rgb(189, 189, 189);
+    border-radius: 5rem;
+    width: 50rem;
+    height: 3rem;
+}
+
+.headers {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+}
+
+p {
+    text-align: center;
+    margin: 1rem;
+}
+
+.projects {
+    margin: 1rem;
+    margin-top: 0;
+    padding: .5rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.proj {
+    background-color: rgb(41, 41, 41);
+    color: rgb(189, 189, 189);
+    box-shadow: 7px 7px 10px rgba(0, 0, 0, 0.479);
+    border-radius: 1rem;
+    padding: 1rem;
+    margin: 1rem;
+}
+
+.projectimage {
+    display: block;
+    margin: auto;
+    height: 13.5rem;
+    width: 24rem;
+    padding-bottom: 1rem;
+}
+
+.projectimage:hover {
+    height: 14rem;
+    width: 24.5rem;
+    padding: .25rem;
+    transition: .21s;
+}
+
+.imglink {
+    display: flex;
+    margin: auto;
+    padding: .5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    transition: .1s;
+}
+
+.imglink:hover {
+    width: 2.7rem;
+    height: 2.7rem;
+    padding: .4rem;
+    transition: .2s;
+}
+
 footer {
     display: flex;
     margin-top: auto;
@@ -69,4 +146,46 @@ footer img {
 footer img:hover {
     width: 2.1rem;
     height: 2.1rem;
+}
+
+
+@media only screen and (max-width: 600px) {
+
+    h2 {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: auto;
+        background-color: rgb(41, 41, 41);
+        color: rgb(189, 189, 189);
+        border-radius: 5rem;
+        width: 10rem;
+        height: 3rem;
+    }
+
+    .projects {
+        margin: 1rem;
+        margin-top: 0;
+        padding: .5rem;
+        flex-direction: column;
+        display: flex;
+    }
+
+    .projectimage {
+        display: block;
+        margin: auto;
+        height: 9rem;
+        width: 16rem;
+        padding-bottom: 1rem;
+    }
+
+    .proj {
+        background-color: rgb(41, 41, 41);
+        color: rgb(189, 189, 189);
+        box-shadow: 7px 7px 10px rgba(0, 0, 0, 0.479);
+        border-radius: .5rem;
+        padding: .5rem;
+        margin: .5rem;
+    }
+    
 }
