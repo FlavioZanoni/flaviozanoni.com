@@ -45,7 +45,7 @@ loader.load(loaded);
 
 function loaded() {
     console.log('[app] => Loaded');
-    if (window.location.href == "https://www.flaviozanoni.com/pt/index.html" || window.location.href == "http://localhost:5500/pt/index.html") {
+    if (window.location.href == "https://flaviozanoni.com/pt/index.html" || window.location.href == "http://localhost:5500/pt/index.html") {
         console.log("pt")
         lan = "pt"
     } else {
@@ -359,11 +359,11 @@ function createMessage() {
 }
 function createMessageButtons(lan) {
     if (lan == "pt") {
-        let text = new PIXI.Text("Esse jogo ainda esta em desenvolvimento",{fontFamily : 'Arial', fontSize: 16});
+        let text = new PIXI.Text("Esse jogo ainda esta em desenvolvimento", { fontFamily: 'Arial', fontSize: 16 });
         text.x = 310;
         text.y = 100;
         msg.addChild(text);
-        let text2 = new PIXI.Text("Pretendo continuar no meu tempo livre :)",{fontFamily : 'Arial', fontSize: 12});
+        let text2 = new PIXI.Text("Pretendo continuar no meu tempo livre :)", { fontFamily: 'Arial', fontSize: 12 });
         text2.x = 310;
         text2.y = 120;
         msg.addChild(text2);
@@ -371,8 +371,8 @@ function createMessageButtons(lan) {
         sprites.msgResume = new PIXI.AnimatedSprite(spritesheet.message.pt.resume);
         sprites.msgResume.x = 440;
         sprites.msgResume.y = 210;
-        sprites.msgResume.width *=2;
-        sprites.msgResume.height *=2;
+        sprites.msgResume.width *= 2;
+        sprites.msgResume.height *= 2;
         sprites.msgResume.interactive = true;
         sprites.msgResume.buttonMode = true;
         sprites.msgResume.on('pointerdown', () => {
@@ -381,8 +381,8 @@ function createMessageButtons(lan) {
         sprites.msgProjects = new PIXI.AnimatedSprite(spritesheet.message.pt.projects);
         sprites.msgProjects.x = 440;
         sprites.msgProjects.y = 280;
-        sprites.msgProjects.width *=2;
-        sprites.msgProjects.height *=2;
+        sprites.msgProjects.width *= 2;
+        sprites.msgProjects.height *= 2;
         sprites.msgProjects.interactive = true;
         sprites.msgProjects.buttonMode = true;
         sprites.msgProjects.on('pointerdown', () => {
@@ -391,8 +391,8 @@ function createMessageButtons(lan) {
         sprites.msgLinkedin = new PIXI.AnimatedSprite(spritesheet.message.linkedin);
         sprites.msgLinkedin.x = 530;
         sprites.msgLinkedin.y = 350;
-        sprites.msgLinkedin.width *=2;
-        sprites.msgLinkedin.height *=2;
+        sprites.msgLinkedin.width *= 2;
+        sprites.msgLinkedin.height *= 2;
         sprites.msgLinkedin.interactive = true;
         sprites.msgLinkedin.buttonMode = true;
         sprites.msgLinkedin.on('pointerdown', () => {
@@ -400,11 +400,11 @@ function createMessageButtons(lan) {
         });
     } else {
 
-        let text = new PIXI.Text("This game is still in development",{fontFamily : 'Arial', fontSize: 16});
+        let text = new PIXI.Text("This game is still in development", { fontFamily: 'Arial', fontSize: 16 });
         text.x = 310;
         text.y = 100;
         msg.addChild(text);
-        let text2 = new PIXI.Text("I'll continue developing it in my free time :)",{fontFamily : 'Arial', fontSize: 12});
+        let text2 = new PIXI.Text("I'll continue developing it in my free time :)", { fontFamily: 'Arial', fontSize: 12 });
         text2.x = 310;
         text2.y = 120;
         msg.addChild(text2);
@@ -413,8 +413,8 @@ function createMessageButtons(lan) {
         sprites.msgResume = new PIXI.AnimatedSprite(spritesheet.message.en.resume);
         sprites.msgResume.x = 440;
         sprites.msgResume.y = 210;
-        sprites.msgResume.width *=2;
-        sprites.msgResume.height *=2;
+        sprites.msgResume.width *= 2;
+        sprites.msgResume.height *= 2;
         sprites.msgResume.interactive = true;
         sprites.msgResume.buttonMode = true;
         sprites.msgResume.on('pointerdown', () => {
@@ -423,8 +423,8 @@ function createMessageButtons(lan) {
         sprites.msgProjects = new PIXI.AnimatedSprite(spritesheet.message.en.projects);
         sprites.msgProjects.x = 440;
         sprites.msgProjects.y = 280;
-        sprites.msgProjects.width *=2;
-        sprites.msgProjects.height *=2;
+        sprites.msgProjects.width *= 2;
+        sprites.msgProjects.height *= 2;
         sprites.msgProjects.interactive = true;
         sprites.msgProjects.buttonMode = true;
         sprites.msgProjects.on('pointerdown', () => {
@@ -433,8 +433,8 @@ function createMessageButtons(lan) {
         sprites.msgLinkedin = new PIXI.AnimatedSprite(spritesheet.message.linkedin);
         sprites.msgLinkedin.x = 530;
         sprites.msgLinkedin.y = 350;
-        sprites.msgLinkedin.width *=2;
-        sprites.msgLinkedin.height *=2;
+        sprites.msgLinkedin.width *= 2;
+        sprites.msgLinkedin.height *= 2;
         sprites.msgLinkedin.interactive = true;
         sprites.msgLinkedin.buttonMode = true;
         sprites.msgLinkedin.on('pointerdown', () => {
@@ -444,10 +444,10 @@ function createMessageButtons(lan) {
     sprites.msgGit = new PIXI.AnimatedSprite(spritesheet.message.github);
     sprites.msgGit.x = 440;
     sprites.msgGit.y = 350;
-    sprites.msgGit.width *=2;
-    sprites.msgGit.height *=2;
+    sprites.msgGit.width *= 2;
+    sprites.msgGit.height *= 2;
     sprites.msgGit.interactive = true;
-    sprites.msgGit.buttonMode = true;   
+    sprites.msgGit.buttonMode = true;
     sprites.msgGit.on('pointerdown', () => {
         window.open("https://github.com/FlavioZanoni");
     });
@@ -589,7 +589,7 @@ let hsp = 0;
 let lastKey;
 let jumping = false;
 
-function gameLoop() { 
+function gameLoop() {
     if (outRoom == true) {
         // press E message
         if (sprites.player.x > 100 && sprites.player.x < 240) {
@@ -696,7 +696,8 @@ function gameLoop() {
                 chesto.play();
                 sprites.chest.onComplete = () => {
                     createMessage()
-                    if (lan == "pt") {;
+                    if (lan == "pt") {
+                        ;
                         createMessageButtons("pt");
                         console.log("message");
                         //show the pt and redirect to the pt
